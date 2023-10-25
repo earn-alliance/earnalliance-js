@@ -1,10 +1,13 @@
 {
   "name": "earnalliance-js",
-  "private": true,
   "version": "0.0.0",
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "build": "npm run build -ws",
+    "publish": "lerna publish --no-private"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
