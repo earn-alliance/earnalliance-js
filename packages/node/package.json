@@ -1,6 +1,6 @@
 {
   "name": "@earnalliance/node",
-  "version": "0.0.5",
+  "version": "0.0.9",
   "description": "Official Earn Alliance SDK for Node.js",
   "repository": "git://github.com/earn-alliance/earnalliance-js.git",
   "homepage": "https://github.com/earn-alliance/earnalliance-js/tree/master/packages/node",
