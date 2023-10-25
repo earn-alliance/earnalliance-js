@@ -1,8 +1,8 @@
 name: Publish
 
 on:
-  pull_request:
-    types: [merged]
+  pull_request_target:
+    types: [closed]
     branches:
       - main
 
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   publish:
-    if: github.ref != 'refs/heads/main'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: Get PR label
