@@ -33,10 +33,9 @@ export class HTTPTransporter {
         method: 'POST',
         headers,
       });
-      const data = await resp.json();
+      const data = (await resp.json()) as unknown;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return data?.message === 'OK';
+      return Boolean(data && typeof data === 'object' && 'message' in data && data?.message === 'OK');
     } catch (err) {
       // The only thing that should throw errors are 500 status codes. Those
       // we retry in case it was network failures.
