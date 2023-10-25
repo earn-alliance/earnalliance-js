@@ -1,6 +1,6 @@
 {
   "name": "@earnalliance/node",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Official Earn Alliance SDK for Node.js",
   "repository": "git://github.com/earn-alliance/earnalliance-js.git",
   "homepage": "https://github.com/earn-alliance/earnalliance-js/tree/master/packages/node",
@@ -14,9 +14,6 @@
   "types": "dist/types/index.d.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@earnalliance/types": "0.0.1"
   },
   "scripts": {
     "build": "npm run build:transpile && npm run build:types",

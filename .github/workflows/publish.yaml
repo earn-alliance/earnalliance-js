@@ -1,0 +1,57 @@
+name: Publish
+
+on:
+  pull_request:
+    types: [merged]
+    branches:
+      - main
+
+permissions:
+  contents: write # for checkout and tag
+  pull-requests: write  # for comments
+  packages: write # for publish
+
+jobs:
+  publish:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get PR label
+      id: pr_labels
+      run: echo "::set-output name=labels::${{ join(github.event.pull_request.labels.*.name, ',') }}"
+
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        registry-url: https://registry.npmjs.org/
+    - name: "Authenticate with Registry"
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_PUBLISH_ACCESS_TOKEN }}
+      run: |
+        echo "@earnalliance:registry=https://registry.npmjs.org/" > .npmrc
+        echo "registry=https://registry.npmjs.org/" >> .npmrc
+        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+        npm whoami
+
+    - name: "Publish package"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.email 'bot@earnalliance.com'
+        git config --global user.name 'gh-actions'
+        
+        labels="${{ steps.pr_labels.outputs.labels }}"
+        if [[ $labels == *"major"* ]]; then
+          echo "Major release"
+          npm run publish major  
+        elif [[ $labels == *"minor"* ]]; then
+          echo "Minor release"
+          npm run publish minor
+        elif [[ $labels == *"patch"* ]]; then
+          echo "Patch release"
+          npm run publish minor
+        else
+          echo "Skip publishing"
+        fi
