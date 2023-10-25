@@ -39,6 +39,7 @@ export interface IEvent {
   userId: string;
   time: string;
   event: string;
+  groupId?: string;
   traits?: ITraits;
   value?: number;
 }

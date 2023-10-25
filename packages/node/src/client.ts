@@ -1,5 +1,7 @@
+import { START_GAME } from './constants';
 import { identify } from './identify';
 import { BatchProcessor } from './processors/batch-processor';
+import { Round } from './round';
 import { track } from './track';
 import { HTTPTransporter } from './transporters/http';
 import type { IdentifyingProperties, ITraits, NodeClientOptions } from './types';
@@ -26,6 +28,15 @@ export class NodeClient {
     this._options = options;
     this._transporter = new HTTPTransporter(options);
     this._processor = new BatchProcessor({ ...options, transporter: this._transporter });
+  }
+
+  public async startGame(userId: string): Promise<void> {
+    const event = track(userId, START_GAME);
+    return this._processor.addEvent(event);
+  }
+
+  public startRound(groupId?: string): Round {
+    return new Round(this._processor, groupId);
   }
 
   public async track(

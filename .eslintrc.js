@@ -14,6 +14,8 @@ module.exports = {
     'plugin:import/warnings',
   ],
 
+  ignorePatterns: ['**/coverage/**', '**/build/**', '**/dist/**', '**/cjs/**', '**/esm/**'],
+
   plugins: ['simple-import-sort'],
 
   overrides: [
@@ -160,6 +162,19 @@ module.exports = {
 
         // All imports should be accounted for
         'import/no-extraneous-dependencies': 'error',
+      },
+    },
+    {
+      // Configuration for config files like rollup
+      files: ['*.config.js', '*.config.mjs'],
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2018,
+      },
+      rules: {
+        'import/no-named-as-default-member': 'off',
+        'import/no-named-as-default': 'off',
+        'import/default': 'off',
       },
     },
   ],
