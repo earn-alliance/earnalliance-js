@@ -37,7 +37,7 @@ export type IQueueItem =
 
 export interface IEvent {
   userId: string;
-  timestamp: string;
+  time: string;
   event: string;
   traits?: ITraits;
   value?: number;
