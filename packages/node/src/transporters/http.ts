@@ -18,12 +18,28 @@ export class HTTPTransporter {
       const timestamp = Date.now();
       const signature = this._sign(payload, timestamp);
 
-      const headers = { 'x-client-id': clientId, 'x-timestamp': `${timestamp}`, 'x-signature': signature };
+      const headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'x-client-id': clientId,
+        'x-timestamp': `${timestamp}`,
+        'x-signature': signature,
+      };
 
-      await fetch(this._options.dsn, { method: 'POST', headers });
+      // 400 errors will not throw an error, instead if will include statusCode
+      // and error in the returned response.
+      const resp = await fetch(this._options.dsn, {
+        body: JSON.stringify(payload),
+        method: 'POST',
+        headers,
+      });
+      const data = await resp.json();
 
-      return true;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return data?.message === 'OK';
     } catch (err) {
+      // The only thing that should throw errors are 500 status codes. Those
+      // we retry in case it was network failures.
       if (attempt < this._maxRetryAttempts) {
         return this._retry(payload, attempt + 1);
       }

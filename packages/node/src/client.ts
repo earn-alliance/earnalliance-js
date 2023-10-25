@@ -28,9 +28,14 @@ export class NodeClient {
     this._processor = new BatchProcessor({ ...options, transporter: this._transporter });
   }
 
-  public track(userId: string, eventName: string, valueOrTraits?: number | ITraits, traits?: ITraits): void {
+  public async track(
+    userId: string,
+    eventName: string,
+    valueOrTraits?: number | ITraits,
+    traits?: ITraits,
+  ): Promise<void> {
     const event = track(userId, eventName, valueOrTraits, traits);
-    void this._processor.addEvent(event);
+    return this._processor.addEvent(event);
   }
 
   public setUserIdentifiers(userId: string, identifyingProperties: IdentifyingProperties): void {

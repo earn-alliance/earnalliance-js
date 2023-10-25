@@ -77,8 +77,7 @@ export class BatchProcessor {
 
     try {
       await this._transporter.send(payload);
-    } catch (err) {
-      // console.log(err)
-    }
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 }
