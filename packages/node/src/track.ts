@@ -1,13 +1,13 @@
 import type { IEvent, ITraits } from './types';
 
-export function track(userId: string, eventName: string, value?: number, traits?: ITraits): IEvent {
+export function track(userId: string, eventName: string, valueOrTraits?: number | ITraits, traits?: ITraits): IEvent {
   const timestamp = new Date().toISOString();
 
   return {
     userId,
     timestamp,
     event: eventName,
-    value,
-    traits,
+    value: typeof valueOrTraits === 'object' ? undefined : valueOrTraits,
+    traits: typeof valueOrTraits === 'object' ? valueOrTraits : traits,
   };
 }
