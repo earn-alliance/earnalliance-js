@@ -4,9 +4,11 @@
   "workspaces": [
     "packages/*"
   ],
+  "private": true,
   "scripts": {
     "build": "npm run build -ws",
-    "publish": "lerna publish --no-private"
+    "preversion": "npm run build",
+    "publish": "npm install && lerna publish --yes"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

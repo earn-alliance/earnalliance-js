@@ -1,0 +1,47 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        type: choice
+        required: true
+        description: Release type
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write # for checkout and tag
+  pull-requests: write  # for comments
+  packages: write # for publish
+
+jobs:
+  publish:
+    if: github.event_name != 'workflow_dispatch' || github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        registry-url: https://registry.npmjs.org/
+    - name: "Authenticate with Registry"
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_PUBLISH_ACCESS_TOKEN }}
+      run: |
+        echo "@earnalliance:registry=https://registry.npmjs.org/" > .npmrc
+        echo "registry=https://registry.npmjs.org/" >> .npmrc
+        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+        npm whoami
+
+    - name: "Publish package"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.email 'bot@earnalliance.com'
+        git config --global user.name 'gh-actions'
+        
+        npm run publish ${{ github.event.inputs.release-type }}
