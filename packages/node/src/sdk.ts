@@ -11,7 +11,7 @@ export function init(options: NodeOptions = {}): NodeClient {
   }
 
   if (options.dsn === undefined && process.env.ALLIANCE_DSN) {
-    options.dsn = process.env.ALLIANCE_DSN || 'https://events.earnalliance.com/v1/custom-events';
+    options.dsn = process.env.ALLIANCE_DSN || 'https://events.earnalliance.com/v2/custom-events';
   }
 
   if (options.gameId === undefined && process.env.ALLIANCE_GAME_ID) {
