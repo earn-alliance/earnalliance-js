@@ -1,0 +1,36 @@
+name: Pull Request Label Check
+
+on:
+  pull_request:
+    types: [labeled, synchronize]
+    branches:
+      - main
+jobs:
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Label
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            pr_number=$(jq --raw-output .pull_request.number "${{ github.event_path }}")
+            valid_labels=("patch" "minor" "major" "no-release")
+          
+            labels=$(curl --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              --request GET \
+              --url "https://api.github.com/repos/${{ github.repository }}/issues/${pr_number}/labels" \
+              --silent \
+              | jq --raw-output ".[].name")
+          
+            valid_label_found=false
+            for valid_label in "${valid_labels[@]}"; do
+              if [[ " ${labels[@]} " =~ " ${valid_label} " ]]; then
+                valid_label_found=true
+                break
+              fi
+            done
+          
+            if [[ "$valid_label_found" == false ]]; then
+              echo "Please add one of the valid labels to this pull request before merging."
+              exit 1
+            fi
+          fi

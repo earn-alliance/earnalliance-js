@@ -1,16 +1,10 @@
 name: Publish
 
 on:
-  workflow_dispatch:
-    inputs:
-      release-type:
-        type: choice
-        required: true
-        description: Release type
-        options:
-          - patch
-          - minor
-          - major
+  pull_request:
+    types: [merged]
+    branches:
+      - main
 
 permissions:
   contents: write # for checkout and tag
@@ -19,9 +13,13 @@ permissions:
 
 jobs:
   publish:
-    if: github.event_name != 'workflow_dispatch' || github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
+    - name: Get PR label
+      id: pr_labels
+      run: echo "::set-output name=labels::${{ join(github.event.pull_request.labels.*.name, ',') }}"
+
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v3
       with:
@@ -44,4 +42,16 @@ jobs:
         git config --global user.email 'bot@earnalliance.com'
         git config --global user.name 'gh-actions'
         
-        npm run publish ${{ github.event.inputs.release-type }}
+        labels="${{ steps.pr_labels.outputs.labels }}"
+        if [[ $labels == *"major"* ]]; then
+          echo "Major release"
+          npm run publish major  
+        elif [[ $labels == *"minor"* ]]; then
+          echo "Minor release"
+          npm run publish minor
+        elif [[ $labels == *"patch"* ]]; then
+          echo "Patch release"
+          npm run publish minor
+        else
+          echo "Skip publishing"
+        fi
