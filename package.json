@@ -7,8 +7,10 @@
   "private": true,
   "scripts": {
     "build": "npm run build -ws",
+    "lint": "eslint packages/",
     "preversion": "npm run build",
-    "publish": "npm install && lerna publish --yes"
+    "publish": "npm install && lerna publish --yes",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
