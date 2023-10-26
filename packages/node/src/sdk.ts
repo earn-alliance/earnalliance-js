@@ -1,4 +1,5 @@
 import { NodeClient } from './client';
+import { DEFAULT_BATCH_SIZE, DEFAULT_INTERVAL, DEFAULT_MAX_RETRY_ATTEMPTS } from './constants';
 import type { NodeClientOptions, NodeOptions } from './types';
 
 export function init(options: NodeOptions = {}): NodeClient {
@@ -18,17 +19,28 @@ export function init(options: NodeOptions = {}): NodeClient {
     options.gameId = process.env.ALLIANCE_GAME_ID;
   }
 
-  const { clientId, clientSecret, dsn, gameId } = options;
+  const {
+    batchSize = DEFAULT_BATCH_SIZE,
+    clientId,
+    clientSecret,
+    dsn,
+    gameId,
+    interval = DEFAULT_INTERVAL,
+    maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
+  } = options;
 
   if (!clientId || !clientSecret || !dsn || !gameId) {
     throw new Error('Missing required client options');
   }
 
   const clientOptions: NodeClientOptions = {
+    batchSize,
     clientId,
     clientSecret,
     dsn,
     gameId,
+    interval,
+    maxRetryAttempts,
   };
 
   return new NodeClient(clientOptions);

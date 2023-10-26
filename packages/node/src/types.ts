@@ -1,30 +1,14 @@
-import type { HTTPTransporter } from './transporters/http';
-
 export interface NodeOptions {
+  batchSize?: number;
   clientId?: string;
   clientSecret?: string;
   dsn?: string;
   gameId?: string;
-}
-
-export interface NodeClientOptions extends NodeOptions {
-  clientId: string;
-  clientSecret: string;
-  dsn: string;
-  gameId: string;
-}
-
-export interface HTTPTransporterOptions extends NodeClientOptions {
+  interval?: number;
   maxRetryAttempts?: number;
 }
 
-export interface BatchProcessorOptions extends NodeClientOptions {
-  batchSize?: number;
-  gameId: string;
-  interval?: number;
-  maxQueueSize?: number;
-  transporter: HTTPTransporter;
-}
+export type NodeClientOptions = Required<NodeOptions>;
 
 export enum EnumQueueItemType {
   Event = 'event',
