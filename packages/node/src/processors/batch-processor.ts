@@ -1,27 +1,22 @@
 import type { HTTPTransporter } from '../transporters/http';
-import type { BatchProcessorOptions, IEvent, IIdentifier, IQueueItem } from '../types';
+import type { IEvent, IIdentifier, IQueueItem, NodeClientOptions } from '../types';
 import { EnumQueueItemType } from '../types';
 
 export class BatchProcessor {
+  /** Options passed to the SDK. */
+  protected readonly _options: NodeClientOptions;
+
   private _queue: IQueueItem[];
-
-  private _interval: number;
-
-  private _batchSize: number;
-
-  private _gameId: string;
 
   private _timer?: NodeJS.Timeout;
 
   private _transporter: HTTPTransporter;
 
-  public constructor(options: BatchProcessorOptions) {
-    this._queue = [];
-    this._gameId = options.gameId;
-    this._transporter = options.transporter;
+  public constructor(transporter: HTTPTransporter, options: NodeClientOptions) {
+    this._transporter = transporter;
+    this._options = options;
 
-    this._batchSize = options.batchSize || 100;
-    this._interval = options.interval || 30_000;
+    this._queue = [];
   }
 
   public async addEvent(event: IEvent): Promise<void> {
@@ -37,7 +32,7 @@ export class BatchProcessor {
   }
 
   public async scheduleBatch(): Promise<void> {
-    if (this._queue.length >= this._batchSize) {
+    if (this._queue.length >= this._options.batchSize) {
       await this.process();
       return;
     }
@@ -45,7 +40,7 @@ export class BatchProcessor {
     if (!this._timer) {
       this._timer = setTimeout(async () => {
         await this.process();
-      }, this._interval);
+      }, this._options.interval);
     }
   }
 
@@ -55,7 +50,7 @@ export class BatchProcessor {
       this._timer = undefined;
     }
 
-    const batch = this._queue.splice(0, this._batchSize);
+    const batch = this._queue.splice(0, this._options.batchSize);
 
     const events: IEvent[] = [];
     const identifiers: IIdentifier[] = [];
@@ -70,7 +65,7 @@ export class BatchProcessor {
     });
 
     const payload = {
-      gameId: this._gameId,
+      gameId: this._options.gameId,
       events,
       identifiers,
     };

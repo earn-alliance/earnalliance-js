@@ -1,10 +1,10 @@
 import { START_GAME } from './constants';
-import { identify } from './identify';
+import { clearIdentifiers, identify } from './identify';
 import { BatchProcessor } from './processors/batch-processor';
 import { Round } from './round';
 import { track } from './track';
 import { HTTPTransporter } from './transporters/http';
-import type { IdentifyingProperties, ITraits, NodeClientOptions } from './types';
+import type { EnumIdentifierPropNames, IdentifyingProperties, ITraits, NodeClientOptions } from './types';
 
 /**
  * The Earn Alliance Node SDK Client.
@@ -27,7 +27,7 @@ export class NodeClient {
   public constructor(options: NodeClientOptions) {
     this._options = options;
     this._transporter = new HTTPTransporter(options);
-    this._processor = new BatchProcessor({ ...options, transporter: this._transporter });
+    this._processor = new BatchProcessor(this._transporter, options);
   }
 
   public async startGame(userId: string): Promise<void> {
@@ -51,6 +51,11 @@ export class NodeClient {
 
   public setUserIdentifiers(userId: string, identifyingProperties: IdentifyingProperties): void {
     const identifier = identify(userId, identifyingProperties);
+    void this._processor.addIdentifier(identifier);
+  }
+
+  public removeUserIdentifiers(userId: string, propertyNames: EnumIdentifierPropNames[]): void {
+    const identifier = clearIdentifiers(userId, propertyNames);
     void this._processor.addIdentifier(identifier);
   }
 }

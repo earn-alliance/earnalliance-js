@@ -80,6 +80,14 @@ alliance.setUserIdentifiers('[internal user id]', {
 });
 ```
 
+Note that if you pass any falsey value identifier to `setUserIdentifiers`, it will be ignored.
+This is the avoid unintentionally removing previously set identifiers. If you want
+to remove previously set identifiers, use the `removeUserIdentifiers` function.
+
+```javascript
+alliance.removeUserIdentifiers('[internal user id]', ['steamId', 'appleId']);
+```
+
 ### Track User Start Session
 
 Sends standard TRACK event for launching a game. This let's us know that the user

@@ -1,15 +1,15 @@
 import crypto from 'crypto';
 
-import type { HTTPTransporterOptions } from '../types';
+import type { NodeClientOptions } from '../types';
 
 export class HTTPTransporter {
-  private _options: HTTPTransporterOptions;
+  private _options: NodeClientOptions;
 
   private _maxRetryAttempts: number;
 
-  public constructor(options: HTTPTransporterOptions) {
+  public constructor(options: NodeClientOptions) {
     this._options = options;
-    this._maxRetryAttempts = options.maxRetryAttempts || 5;
+    this._maxRetryAttempts = options.maxRetryAttempts;
   }
 
   public async send(payload: Record<string, unknown>, attempt: number = 0): Promise<boolean> {
