@@ -19,7 +19,9 @@
     "build": "npm run build:transpile && npm run build:types",
     "build:dev": "npm run build",
     "build:transpile": "rollup -c",
-    "build:types": "tsc -p tsconfig.types.json"
+    "build:types": "tsc -p tsconfig.types.json",
+    "test": "npm run test:jest",
+    "test:jest": "jest"
   },
   "devDependencies": {
     "@types/node": "^20.8.7"

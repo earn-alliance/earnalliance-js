@@ -4,6 +4,8 @@
   </a>
 </p>
 
+[![npm version](https://img.shields.io/npm/v/@earnalliance/node.svg)](https://www.npmjs.com/package/@earnalliance/node)
+![Test](https://github.com/earn-alliance/earnalliance-js/workflows/Tests/badge.svg)
 [![Discord](https://img.shields.io/discord/926167446648397836)](http://discord.gg/2VqABVytBZ)
 
 # Official Earn Alliance SDKs for NodeJS
@@ -18,7 +20,6 @@ This is the Earn Alliance NodeJS SDK.
 ## Contents
 
 - [Installation and Usage](#installation-and-usage)
-- [Other Packages](#other-packages)
 
 ## Installation and Usage
 
@@ -140,20 +141,4 @@ round.track('[internal user id]', 'KILL_ZOMBIE');
 // to all events that are tracked for the specific round.
 const round = alliance.startRound({ map: 'nuclear_wasteland' });
 round.track('[internal user id]', 'KILL_ZOMBIE');
-```
-
-## Testing
-
-While developing, you can test the SDK by setting the `dsn` option to point
-to our test servers. Note that this requires you to use the test specific
-ids and secrets.
-
-```javascript
-const alliance = Alliance.init({
-  clientId: '[test client id]',
-  clientSecret: '[test client secret]',
-  gameId: '[test game id]',
-  dsn: 'https://events-test.earnalliance.com/v2/custom-events',
-  // ...
-});
 ```

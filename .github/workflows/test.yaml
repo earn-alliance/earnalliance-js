@@ -1,4 +1,4 @@
-name: Lint
+name: Tests
 
 on:
   # Trigger the workflow on push or pull request,
@@ -18,8 +18,8 @@ permissions:
   contents: write
 
 jobs:
-  run-linters:
-    name: Run linters
+  run-tests:
+    name: Run Jest Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -35,10 +35,5 @@ jobs:
       - name: Install dependencies
         run: npm install --immutable
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          eslint_args: "--max-warnings 0"
-          eslint_extensions: "js,jsx,ts,tsx"
-          tsc: true
+      - name: Run Tests
+        run: npm run test
