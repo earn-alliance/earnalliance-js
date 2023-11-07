@@ -149,3 +149,22 @@ round.track('[internal user id]', 'KILL_ZOMBIE');
 const round = alliance.startRound({ map: 'nuclear_wasteland' });
 round.track('[internal user id]', 'KILL_ZOMBIE');
 ```
+
+### Flush event queue
+
+For events that have higher priority (i.e. setUserIdentifiers), instead of
+initiating a scheduled batch, they trigger the use of an event queue flush.
+This means that as long as the client has not been flushed prior to the event,
+the event will be sent to the api right away.
+
+Once the queue has been has been flushed, the client enters a 10 second cooldown
+period, during which any subsequent calls to flush, will wait for the cooldown
+to finish, before it's triggered. Not that any normal procedures, like the queue
+size reaches the batch limit, will still send the events to the api.
+
+The `flush` function can also be called manually on the client instance, but
+it is still restricted by the same cooldown mechanic.
+
+```javascript
+alliance.flush();
+```
