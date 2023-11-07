@@ -177,6 +177,13 @@ module.exports = {
         'import/default': 'off',
       },
     },
+    {
+      // Configuration for Test files
+      files: ['**/*.test.ts'],
+      rules: {
+        '@typescript-eslint/unbound-method': 'off',
+      },
+    },
   ],
 
   rules: {

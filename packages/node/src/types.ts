@@ -3,6 +3,7 @@ export interface NodeOptions {
   clientId?: string;
   clientSecret?: string;
   dsn?: string;
+  flushEvents?: string[];
   gameId?: string;
   interval?: number;
   maxRetryAttempts?: number;

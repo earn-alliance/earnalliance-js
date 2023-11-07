@@ -1,3 +1,4 @@
+import { FLUSH_COOLDOWN } from '../constants';
 import type { HTTPTransporter } from '../transporters/http';
 import type { IEvent, IIdentifier, IQueueItem, NodeClientOptions } from '../types';
 import { EnumQueueItemType } from '../types';
@@ -10,6 +11,10 @@ export class BatchProcessor {
 
   private _timer?: NodeJS.Timeout;
 
+  private _flushTimer?: NodeJS.Timeout;
+
+  private _lastFlush: number;
+
   private _transporter: HTTPTransporter;
 
   public constructor(transporter: HTTPTransporter, options: NodeClientOptions) {
@@ -17,10 +22,16 @@ export class BatchProcessor {
     this._options = options;
 
     this._queue = [];
+    this._lastFlush = 0;
   }
 
   public async addEvent(event: IEvent): Promise<void> {
     this._queue.push({ type: EnumQueueItemType.Event, event });
+
+    if (this._options.flushEvents.includes(event.event)) {
+      await this.flush();
+      return;
+    }
 
     await this.scheduleBatch();
   }
@@ -28,7 +39,7 @@ export class BatchProcessor {
   public async addIdentifier(identifier: IIdentifier): Promise<void> {
     this._queue.push({ type: EnumQueueItemType.Identifier, identifier });
 
-    await this.scheduleBatch();
+    await this.flush();
   }
 
   public async scheduleBatch(): Promise<void> {
@@ -44,11 +55,25 @@ export class BatchProcessor {
     }
   }
 
-  public async process(): Promise<void> {
-    if (this._timer) {
-      clearTimeout(this._timer);
-      this._timer = undefined;
+  public async flush(): Promise<void> {
+    if (this._flushTimer) return;
+
+    const now = Date.now().valueOf();
+    const timeSinceLastFlush = now - this._lastFlush;
+
+    if (timeSinceLastFlush >= FLUSH_COOLDOWN) {
+      this._lastFlush = now;
+      await this.process();
+      return;
     }
+
+    this._flushTimer = setTimeout(async () => {
+      await this.process();
+    }, FLUSH_COOLDOWN - timeSinceLastFlush);
+  }
+
+  public async process(): Promise<void> {
+    this.clearTimer();
 
     const batch = this._queue.splice(0, this._options.batchSize);
 
@@ -74,5 +99,17 @@ export class BatchProcessor {
       await this._transporter.send(payload);
       // eslint-disable-next-line no-empty
     } catch {}
+  }
+
+  public clearTimer(): void {
+    if (this._timer) {
+      clearTimeout(this._timer);
+      this._timer = undefined;
+    }
+
+    if (this._flushTimer) {
+      clearTimeout(this._flushTimer);
+      this._flushTimer = undefined;
+    }
   }
 }

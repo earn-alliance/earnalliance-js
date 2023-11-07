@@ -49,6 +49,10 @@ export class NodeClient {
     return this._processor.addEvent(event);
   }
 
+  public async flush(): Promise<void> {
+    return this._processor.flush();
+  }
+
   public setUserIdentifiers(userId: string, identifyingProperties: IdentifyingProperties): void {
     const identifier = identify(userId, identifyingProperties);
     void this._processor.addIdentifier(identifier);
