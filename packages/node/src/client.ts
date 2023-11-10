@@ -53,13 +53,13 @@ export class NodeClient {
     return this._processor.flush();
   }
 
-  public setUserIdentifiers(userId: string, identifyingProperties: IdentifyingProperties): void {
+  public async setUserIdentifiers(userId: string, identifyingProperties: IdentifyingProperties): Promise<void> {
     const identifier = identify(userId, identifyingProperties);
-    void this._processor.addIdentifier(identifier);
+    return this._processor.addIdentifier(identifier);
   }
 
-  public removeUserIdentifiers(userId: string, propertyNames: EnumIdentifierPropNames[]): void {
+  public async removeUserIdentifiers(userId: string, propertyNames: EnumIdentifierPropNames[]): Promise<void> {
     const identifier = clearIdentifiers(userId, propertyNames);
-    void this._processor.addIdentifier(identifier);
+    return this._processor.addIdentifier(identifier);
   }
 }
