@@ -11,7 +11,7 @@ export function init(options: NodeOptions = {}): NodeClient {
     options.clientSecret = process.env.ALLIANCE_CLIENT_SECRET;
   }
 
-  if (options.dsn === undefined && process.env.ALLIANCE_DSN) {
+  if (!options.dsn) {
     options.dsn = process.env.ALLIANCE_DSN || 'https://events.earnalliance.com/v2/custom-events';
   }
 
