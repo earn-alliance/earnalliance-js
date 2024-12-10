@@ -76,6 +76,7 @@ alliance.setUserIdentifiers('[internal user id]', {
   'email': 'hello@earnalliance.com',
   'epicGamesId': '...',
   'steamId': '...',
+  'telegramId': '...',
   'twitterId': '...',
   'walletAddress': '0x00.00',
 });
