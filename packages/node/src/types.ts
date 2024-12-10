@@ -35,6 +35,7 @@ export enum EnumIdentifierPropNames {
   email = 'email',
   epicGamesId = 'epicGamesId',
   steamId = 'steamId',
+  telegramId = 'telegramId',
   twitterId = 'twitterId',
   walletAddress = 'walletAddress',
 }
@@ -44,6 +45,7 @@ export interface IdentifyingProperties {
   email?: string;
   epicGamesId?: string;
   steamId?: string;
+  telegramId?: string;
   twitterId?: string;
   walletAddress?: string;
 }
@@ -55,6 +57,7 @@ export interface IIdentifier {
   email?: string | null;
   epicGamesId?: string | null;
   steamId?: string | null;
+  telegramId?: string | null;
   twitterId?: string | null;
   walletAddress?: string | null;
 }
